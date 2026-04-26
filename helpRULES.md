@@ -7,7 +7,7 @@
 ## 2. 기술 스택 (기술적 결정)
 - Frontend: React (Vite), Tailwind CSS
 - Deployment: Vercel CLI
-- AI 모델: Gemini 1.5 Pro / Claude 3.5 Sonnet
+- AI 모델: gemini-2.5-pro / sonnet 4.6
 - UI 라이브러리: Lucide React (아이콘용), Headless UI (필요 시)
 
 ## 3. 개발 원칙 (중요)

@@ -7,6 +7,10 @@ const BASE_PERSONA = `
 `.trim()
 
 const BASE_FORMAT = `
+[언어 규칙] 모든 텍스트 값은 오직 한글(가-힣), 숫자, 문장부호만 사용하세요.
+한자(漢字)·영어·중국어·일본어 등 한글이 아닌 문자는 단 한 글자도 절대 사용 금지.
+고유명사·전문용어도 반드시 한글로 풀어 쓰세요.
+
 아래 JSON 스키마를 **반드시** 지켜서 한국어로 응답하세요.
 마크다운 코드 블록 없이 JSON 객체만 출력하세요.
 
@@ -116,7 +120,7 @@ export default async function handler(req, res) {
         { role: 'user', content: application },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.7,
+      temperature: 0.4,
     })
 
     const raw = completion.choices?.[0]?.message?.content

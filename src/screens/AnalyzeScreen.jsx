@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Loader2, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowRight, Sparkles } from 'lucide-react'
 import NavBar from '../components/NavBar'
 
 export default function AnalyzeScreen({ onHome, onBack, onSettings, onComplete, settingsApi }) {
@@ -39,71 +39,85 @@ export default function AnalyzeScreen({ onHome, onBack, onSettings, onComplete, 
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <NavBar onHome={onHome} onBack={onBack} onSettings={onSettings} title="새 지원자" />
       <main className="max-w-2xl mx-auto px-6 py-8 space-y-5">
-        <section>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">지원자 이름</label>
-          <input type="text"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
-            placeholder="홍길동" value={name}
-            onChange={e => setName(e.target.value)} disabled={!!result} />
-        </section>
 
-        <section>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">지원서 본문</label>
-          <textarea
-            className="w-full h-56 resize-none rounded-lg border border-gray-300 p-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50"
-            placeholder="지원서 내용을 여기에 붙여넣으세요..."
-            value={application} onChange={e => setApplication(e.target.value)} disabled={!!result} />
-        </section>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+          <section>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">지원자 이름</label>
+            <input type="text"
+              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-50 transition-shadow"
+              placeholder="홍길동" value={name}
+              onChange={e => setName(e.target.value)} disabled={!!result} />
+          </section>
 
-        {error && <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">{error}</p>}
+          <section>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">지원서 본문</label>
+            <textarea
+              className="w-full h-56 resize-none rounded-xl border border-gray-200 p-4 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:bg-gray-50 leading-relaxed transition-shadow"
+              placeholder="지원서 내용을 여기에 붙여넣으세요..."
+              value={application} onChange={e => setApplication(e.target.value)} disabled={!!result} />
+          </section>
 
-        {!result && (
-          <button onClick={handleAnalyze} disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-2.5 rounded-lg transition-colors">
-            {loading ? <><Loader2 className="w-4 h-4 animate-spin" />분석 중...</> : '면접 질문 생성하기'}
-          </button>
-        )}
+          {error && (
+            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-2.5">{error}</p>
+          )}
+
+          {!result && (
+            <button onClick={handleAnalyze} disabled={loading}
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:from-indigo-400 disabled:to-violet-400 text-white font-semibold py-3 rounded-xl transition-all shadow-md shadow-indigo-100">
+              {loading
+                ? <><Loader2 className="w-4 h-4 animate-spin" />분석 중...</>
+                : <><Sparkles className="w-4 h-4" />면접 질문 생성하기</>
+              }
+            </button>
+          )}
+        </div>
 
         {result && (
           <>
-            <div className="border border-gray-200 rounded-xl p-5 bg-gray-50 space-y-5">
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">AI 분석 결과</h2>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                </div>
+                <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest">AI 분석 결과</h2>
+              </div>
 
               {/* 요약 */}
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-gray-500">3줄 요약</p>
-                <ul className="space-y-1">
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">3줄 요약</p>
+                <ul className="space-y-1.5">
                   {result.summary?.map((s, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-gray-700">
-                      <span className="text-indigo-400 font-bold shrink-0">{i + 1}.</span>{s}
+                    <li key={i} className="flex gap-2.5 text-sm text-gray-700">
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 text-xs font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
+                      {s}
                     </li>
                   ))}
                 </ul>
               </div>
 
               {/* 키워드 */}
-              <div className="space-y-1.5">
-                <p className="text-xs font-medium text-gray-500">핵심 키워드</p>
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">핵심 키워드</p>
                 <div className="flex flex-wrap gap-1.5">
                   {result.keywords?.map((k, i) => (
-                    <span key={i} className="px-2.5 py-0.5 bg-indigo-50 text-indigo-600 text-xs font-medium rounded-full border border-indigo-100">{k}</span>
+                    <span key={i} className="px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-semibold rounded-full border border-indigo-100">{k}</span>
                   ))}
                 </div>
               </div>
 
               {/* 질문 */}
               <div className="space-y-2">
-                <p className="text-xs font-medium text-gray-500">추천 면접 질문</p>
-                <ol className="space-y-2.5">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">추천 면접 질문</p>
+                <ol className="space-y-3">
                   {result.questions?.map((q, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="shrink-0 w-5 h-5 rounded-full bg-indigo-100 text-indigo-600 text-xs font-semibold flex items-center justify-center mt-0.5">{i + 1}</span>
+                    <li key={i} className="flex gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-indigo-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">{i + 1}</span>
                       <div>
-                        <span className={`text-xs font-medium px-1.5 py-0.5 rounded mr-1.5 ${q.type === '모순검증' ? 'bg-orange-50 text-orange-500' : 'bg-blue-50 text-blue-500'}`}>{q.type}</span>
-                        <span className="text-sm text-gray-700">{q.question}</span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full mr-1.5 ${q.type === '모순짚기' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'}`}>{q.type}</span>
+                        <span className="text-sm text-gray-700 leading-relaxed">{q.question}</span>
                       </div>
                     </li>
                   ))}
@@ -113,11 +127,11 @@ export default function AnalyzeScreen({ onHome, onBack, onSettings, onComplete, 
 
             <div className="flex gap-3">
               <button onClick={() => { setResult(null); setError('') }}
-                className="flex-1 border border-gray-300 hover:border-gray-400 text-gray-600 text-sm font-medium py-2.5 rounded-lg transition-colors">
+                className="flex-1 border border-gray-200 hover:border-gray-300 bg-white text-gray-600 text-sm font-semibold py-3 rounded-xl transition-colors shadow-sm">
                 다시 생성
               </button>
               <button onClick={() => onComplete({ name: name.trim(), application: application.trim(), questions: result })}
-                className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 rounded-lg transition-colors">
+                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-semibold py-3 rounded-xl transition-all shadow-md shadow-indigo-100">
                 평가 시작하기 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

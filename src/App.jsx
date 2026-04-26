@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApplicants } from './hooks/useApplicants'
 import { useSettings } from './hooks/useSettings'
+import { useGoogleAuth } from './hooks/useGoogleAuth'
 import HomeScreen from './screens/HomeScreen'
 import AnalyzeScreen from './screens/AnalyzeScreen'
 import EvaluateScreen from './screens/EvaluateScreen'
@@ -10,6 +11,7 @@ import SettingsScreen from './screens/SettingsScreen'
 export default function App() {
   const { applicants, addApplicant, updateApplicant, deleteApplicant } = useApplicants()
   const settingsApi = useSettings()
+  const googleAuth = useGoogleAuth()
 
   const [stack, setStack] = useState([{ screen: 'home', applicantId: null }])
   const current = stack[stack.length - 1]
@@ -33,6 +35,7 @@ export default function App() {
       {current.screen === 'home' && (
         <HomeScreen
           applicants={applicants}
+          settingsApi={settingsApi}
           onNew={() => go('analyze')}
           onSelect={(id) => go('evaluate', id)}
           onOverview={() => go('overview')}
@@ -72,6 +75,7 @@ export default function App() {
         <SettingsScreen
           {...nav}
           settingsApi={settingsApi}
+          googleAuth={googleAuth}
         />
       )}
     </div>

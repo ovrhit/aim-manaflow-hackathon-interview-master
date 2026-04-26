@@ -3,6 +3,8 @@ import { useState } from 'react'
 const KEY = 'interview-settings-v1'
 
 const DEFAULTS = {
+  clubName: '',
+  clubTagline: '',
   criteria: [
     { id: 'fit', label: '직무 적합도' },
     { id: 'communication', label: '소통 능력' },
@@ -44,5 +46,9 @@ export function useSettings() {
     persist(prev => ({ ...prev, customPresets }))
   }
 
-  return { settings, updateCriteria, updateCommonQuestions, updatePromptPreset, updateCustomPresets }
+  function updateClubInfo(clubName, clubTagline) {
+    persist(prev => ({ ...prev, clubName, clubTagline }))
+  }
+
+  return { settings, updateCriteria, updateCommonQuestions, updatePromptPreset, updateCustomPresets, updateClubInfo }
 }

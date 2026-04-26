@@ -20,6 +20,11 @@ export default function RecordingPanel({ savedTranscript, onSave }) {
   const [showSaved, setShowSaved] = useState(!!savedTranscript)
   const [toastVisible, setToastVisible] = useState(false)
 
+  // 트랜스크립트가 저장되면 자동으로 펼치기
+  useEffect(() => {
+    if (savedTranscript) setShowSaved(true)
+  }, [savedTranscript])
+
   function handleSave() {
     if (!transcript.trim()) return
     onSave(transcript)

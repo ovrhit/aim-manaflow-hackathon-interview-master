@@ -69,6 +69,7 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
   const [overallScore, setOverallScore] = useState(applicant.overallScore ?? 0)
   const [memo, setMemo] = useState(applicant.memo ?? '')
   const [saved, setSaved] = useState(false)
+  const [decision, setDecision] = useState(applicant.decision ?? null)
 
   // 질문 관리
   const [newQuestion, setNewQuestion] = useState('')
@@ -88,7 +89,7 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
     : null
 
   function handleSave() {
-    onUpdate({ scores, overallScore, memo, evaluated: true })
+    onUpdate({ scores, overallScore, memo, evaluated: true, interviewed: true })
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
   }
@@ -140,7 +141,7 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
           <div className="space-y-4">
 
             {/* AI 생성 질문 */}
-            <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
               <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">AI 면접 질문</h2>
               <ol className="space-y-3">
                 {aiQuestions.map((q, i) => (
@@ -160,7 +161,7 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
             </section>
 
             {/* 공통 질문 */}
-            <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
               <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">공통 질문</h2>
               {settings.commonQuestions.length > 0 ? (
                 <ul className="space-y-2">
@@ -192,7 +193,7 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
             </section>
 
             {/* 면접자별 질문 */}
-            <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
               <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{applicant.name} 전용 질문</h2>
               {(applicant.customQuestions ?? []).length > 0 ? (
                 <ul className="space-y-2">
@@ -228,7 +229,22 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
           <div className="space-y-4">
 
             {/* 평가 기준 + 점수 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-4">
+              {/* 면접 진행 여부 */}
+              <div className="flex items-center justify-between pb-1">
+                <span className="text-xs font-medium text-gray-500">면접 진행 여부</span>
+                <button
+                  onClick={() => onUpdate({ interviewed: !applicant.interviewed })}
+                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
+                    applicant.interviewed
+                      ? 'bg-indigo-100 border-indigo-200 text-indigo-700'
+                      : 'bg-gray-100 border-gray-200 text-gray-400 hover:bg-gray-200'
+                  }`}
+                >
+                  {applicant.interviewed ? '✓ 면접 완료' : '면접 전'}
+                </button>
+              </div>
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">평가</h2>
@@ -300,14 +316,40 @@ export default function EvaluateScreen({ applicant, allApplicants, settingsApi, 
                   onChange={e => setMemo(e.target.value)}
                 />
               </div>
-              <button onClick={handleSave} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 rounded-lg transition-colors">
+              <button onClick={handleSave} className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-all shadow-sm shadow-indigo-100">
                 평가 저장
               </button>
+
+              {/* 최종 결정 */}
+              <div className="space-y-2 pt-1">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">최종 결정</p>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: '합격', active: 'bg-emerald-100 border-emerald-300 text-emerald-700' },
+                    { label: '보류', active: 'bg-amber-100 border-amber-300 text-amber-700' },
+                    { label: '불합격', active: 'bg-red-100 border-red-300 text-red-700' },
+                  ].map(({ label, active }) => (
+                    <button
+                      key={label}
+                      onClick={() => {
+                        const next = decision === label ? null : label
+                        setDecision(next)
+                        onUpdate({ decision: next })
+                      }}
+                      className={`text-xs font-semibold py-2 rounded-xl border transition-all ${
+                        decision === label ? active : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* 비교 */}
             {others.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-3">
                 <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest">다른 지원자 비교 ({others.length}명 평균)</h2>
                 {settings.criteria.map(({ id, label }) => (
                   <CompareBar key={id} label={label} value={scores[id] ?? 0} avgValue={avg(id)} />

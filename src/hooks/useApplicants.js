@@ -29,6 +29,9 @@ export function useApplicants() {
       customQuestions: [],
       createdAt: new Date().toLocaleString('ko-KR'),
       evaluated: false,
+      interviewed: false,
+      decision: null,
+      aiComment: null,
     }
     persist(prev => [next, ...prev])
     return next

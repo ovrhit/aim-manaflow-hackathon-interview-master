@@ -1,0 +1,22 @@
+.aider*
+
+# env files — never commit these
+.env
+.env.local
+.env.*.local
+.env*.local
+*.pem
+*.key
+
+# build output
+dist/
+node_modules/
+.vercel
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
